@@ -9,6 +9,7 @@ use App\Role;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserCreateRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AdminUserController extends Controller
 {
@@ -60,6 +61,7 @@ class AdminUserController extends Controller
         $user->save();
         $user->sendEmailVerificationNotification();
         $user->roles()->attach($request->input('roles'));
+        Session::flash('add_user', 'user-added');
         return redirect('/admin/users');
     }
 
@@ -82,7 +84,9 @@ class AdminUserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::findOrFail($id);
+        $roles = Role::pluck('name', 'id');
+        return view('admin.users.edit', compact(['user', 'roles']));
     }
 
     /**
@@ -94,7 +98,28 @@ class AdminUserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+        if($file = $request->file('avatar')){
+            $name = time() . $file->getClientOriginalName() ;
+            $file->move('images', $name);
+            $photo = new Photo();
+            $photo->name = $file->getClientOriginalName();
+            $photo->path = $name;
+            $photo->user_id = Auth::id();
+            $photo->save();
+            $user->photo_id = $photo->id;
+        }
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        if(trim($request->input('password') != "")){
+            $user->password = bcrypt($request->input('password'));
+        }
+        $user->status = $request->input('status');
+        $user->save();
+        $user->roles()->sync($request->input('roles'));
+        Session::flash('update_user', 'user was updated');
+        return redirect('/admin/users');
     }
 
     /**
@@ -105,6 +130,14 @@ class AdminUserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+        if ($user->photo_id){
+            $photo = Photo::find($user->photo_id);
+            unlink(public_path() . $user->photo->path);
+            $photo->delete();
+        }
+        $user->delete();
+        Session::flash('delete_user', 'user was deleted');
+        return redirect('admin/users');
     }
 }
