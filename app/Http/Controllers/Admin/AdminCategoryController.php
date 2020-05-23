@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Category;
 use App\Http\Requests\CategoryRequest;
 use Illuminate\Support\Facades\Session;

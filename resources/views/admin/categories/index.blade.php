@@ -1,28 +1,36 @@
 @extends('admin.app')
-@section('title')Admin ShowPosts @endsection
+@section('title')Admin Category @endsection
 @section('content')
-    <h3>Posts</h3>
+    <h3>Categories</h3>
     @if(Session::has('delete_category'))
-        <div>
+        <div class="alert alert-danger">
             <div>{{session('delete_category')}}</div>
         </div>
     @endif
     @if(Session::has('add_category'))
-        <div>
+        <div class="alert alert-success">
             <div>{{session('add_category')}}</div>
         </div>
     @endif
     @if(Session::has('update_category'))
-        <div>
+        <div class="alert alert-success">
             <div>{{session('update_category')}}</div>
         </div>
     @endif
-    <ul>
-        @foreach($categories as $category)
-            <li>
-                <a href="{{route('categories.edit', $category->id)}}">{{$category->title}}</a> --
-                {{$category->created_at}}
-            </li>
-        @endforeach
-    </ul>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Category Title</th>
+                <th>Created At</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($categories as $category)
+                <tr>
+                    <td><a href="{{route('categories.edit', $category->id)}}">{{$category->title}}</a></td>
+                    <td>{{$category->created_at}}</td>
+                </tr>
+             @endforeach
+            </tbody>
+        </table>
 @endsection

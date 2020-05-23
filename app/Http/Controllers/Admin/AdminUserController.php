@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Photo;
 use App\User;
 use App\Role;
-use Illuminate\Http\Request;
 use App\Http\Requests\UserCreateRequest;
+use App\Http\Requests\UserEditRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+
 
 class AdminUserController extends Controller
 {
@@ -96,7 +97,7 @@ class AdminUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserEditRequest $request, $id)
     {
         $user = User::findOrFail($id);
         if($file = $request->file('avatar')){

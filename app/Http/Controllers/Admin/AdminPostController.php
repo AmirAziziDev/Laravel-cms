@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Photo;
-use Illuminate\Http\Request;
 use App\Post;
 use App\Category;
 use Illuminate\Support\Facades\Auth;
